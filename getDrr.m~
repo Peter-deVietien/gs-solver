@@ -3,21 +3,22 @@ function Drr=getDrr(r)
 
 % Loop through D twice, once for d2/dr2 and once for -1/r * d/dr
 [ni,nj]=size(r);
-D=zeros(nj,nj);
+D=zeros(ni,ni);
+Dl=zeros(ni,ni);
 
 %% d2/dr2
-for i = 2:nj-1
-    for j = 2:nj-1
+for i = 2:ni-1
+    for j = 2:ni-1
         if (i+1)==j
-            %D(i,j)=1/(r(i+2,j)-r(i,j)) * 1/(r(i+1,j)-r(i,j))
-            %D(i,j)='A'
+            D(i,j)=1/(r(i+2,j)-r(i,j)) * 1/(r(i+1,j)-r(i,j));
+            %Dl(i,j)='A'
         elseif i==j
-            %D(i,j)=1/(r(i+1,j)-r(i-1,j)) * 1/(r(i+1,j)-r(i,j)) + ...
-             %      1/(r(i+1,j)-r(i-1,j)) * 1/(r(i,j)-r(i-1,j));
+            D(i,j)=1/(r(i+1,j)-r(i-1,j)) * 1/(r(i+1,j)-r(i,j)) + ...
+                   1/(r(i+1,j)-r(i-1,j)) * 1/(r(i,j)-r(i-1,j));
             D(i,j)=-D(i,j)
             %D(i,j)='B'
         elseif (i-1)==j
-            D(i,j)=1/(r(i,j)-r(i-2,j)) * 1/(r(i,j)-r(i-1,j))
+            D(i,j)=1/(r(i,j)-r(i-2,j)) * 1/(r(i,j)-r(i-1,j));
             %D(i,j)='C'
         end
     end
@@ -36,6 +37,6 @@ for i = 2:ni-1
     end
 end
 
-Dt = D + D2
+Dt = D + D2;
 
 Drr=Dt';

@@ -1,5 +1,5 @@
 % nx(1) is r and i direction, nx(2) is z and j direction
-nx=[11,11];
+nx=[11,7];
 rlim=[0,2];
 zlim=[-1,1];
 
