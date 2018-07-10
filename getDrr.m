@@ -10,15 +10,14 @@ Dl=zeros(ni,ni);
 for i = 2:ni-1
     for j = 2:ni-1
         if (i+1)==j
-            D(i,j)=1/(r(i+2,j)-r(i,j)) * 1/(r(i+1,j)-r(i,j));
+            D(i,j)=1/(r(i+2,j)-r(i+1,j)) * 1/(r(i+1,j)-r(i,j));
             %Dl(i,j)='A'
         elseif i==j
-            D(i,j)=1/(r(i+1,j)-r(i-1,j)) * 1/(r(i+1,j)-r(i,j)) + ...
-                   1/(r(i+1,j)-r(i-1,j)) * 1/(r(i,j)-r(i-1,j));
-            D(i,j)=-D(i,j);
+            D(i,j)=1/(r(i+1,j)-r(i,j)) * 1/(r(i,j)-r(i-1,j));
+            D(i,j)=-2*D(i,j);
             %Dl(i,j)='B'
         elseif (i-1)==j
-            D(i,j)=1/(r(i,j)-r(i-2,j)) * 1/(r(i,j)-r(i-1,j));
+            D(i,j)=1/(r(i,j)-r(i-1,j)) * 1/(r(i-1,j)-r(i-2,j));
             %Dl(i,j)='C'
         end
     end
@@ -27,6 +26,7 @@ end
 D2=zeros(ni,ni);
 Dl2=zeros(ni,ni);
 
+%% - 1/r * d/dr
 for i = 2:ni-1
     for j = 2:ni-1
         if (i+1)==j

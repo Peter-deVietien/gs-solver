@@ -12,10 +12,8 @@ psi=zeros(nx(1),nx(2));
 % Initial Guess
 rmax=max(r(:));
 zmax=max(z(:));
-xr=linspace(0,rmax,nx(1));
-xz=linspace(0,zmax,nx(2));
+xr=linspace(0,rmax,nx(1))
 psi=ones(nx(1),nx(2));
-psi=psi(:,2)*sin(pi/rmax*xr)
 psi(1,:)=0;
 psi(end,:)=0;
 psi(:,1)=0;
@@ -35,15 +33,11 @@ while dpsidtpsi>(1e-8)
     
     p=p1*psi.^2;
     F=f1*psi;
-
+    
     pterm=-mu0*r(2:end-1,2:end-1).^2*ddpsi(psi,p);
     fterm=-0.5*ddpsi(psi,F.^2);
-   
-    if ct>10
-        C=pterm+fterm;
-    else
-        C=-1;
-    end
+    %C=-1;
+    C=pterm+fterm;
     
     dstarpsi=Drr*psi + psi*Dzz;
     

@@ -4,4 +4,7 @@ get_mesh
 Drr=getDrr(r);
 Dzz=getDzz(z);
 
-psi=r.^2
+rsq=r.^2;
+Drr*rsq
+zsq=z.^2;
+zsq*Dzz

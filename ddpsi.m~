@@ -1,0 +1,60 @@
+function [dydpsi]=ddpsi(psi,y)
+
+% dy/dpsi = dy/dz * dz/dpsi + dy/dr * dr/dpsi
+% using central differences
+
+get_mesh
+
+%% im = indicies for mesh
+linds=1:nx(1)*nx(2);
+sinds=reshape(linds,nx(1),nx(2)); %square inds
+im=sinds;
+im(1,:)=[];
+im(end,:)=[];
+im(:,1)=[];
+im(:,end)=[];
+
+irp1=im+1;
+irm1=im-1;
+
+izp1=[im(:,2:end),sinds(2:end-1,end)];
+izm1=[sinds(2:end-1,1),im(:,1:end-1)];
+
+%% Central, backward and forward dr and dz
+dzc=z(izp1)-z(izm1);
+dzb=z(im)-z(izm1);
+dzf=z(izp1)-z(im);
+
+drc=r(irp1)-r(irm1);
+drb=r(im)-r(irm1);
+drf=r(irp1)-r(im);
+
+%% dy in r direction
+dyrc=y(irp1)-y(irm1);
+dyrb=y(im)-y(irm1);
+dyrf=y(irp1)-y(im);
+
+%% dy in z direction
+dyzc=y(izp1)-y(izm1);
+dyzb=y(im)-y(izm1);
+dyzf=y(izp1)-y(im);
+
+%% dpsi in r direction
+dpsirc=psi(irp1)-psi(irm1);
+dpsirb=psi(im)-psi(irm1);
+dpsirf=psi(irp1)-psi(im);
+
+%% dpsi in z direction
+dpsizc=psi(izp1)-psi(izm1);
+dpsizb=psi(im)-psi(izm1);
+dpsizf=psi(izp1)-psi(im);
+
+%% dy/dz, dy/dr
+
+dydzc=dyzc./dzc;
+dydrc=dyrc./drc;
+
+%% dpsi/dz, dpsi/dr
+
+dpsidz=dpsizc./dzc;
+dpsidr=dpsirc./drc;
