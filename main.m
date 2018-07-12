@@ -15,7 +15,7 @@ zmax=max(z(:));
 xr=linspace(0,rmax,nx(1));
 xz=linspace(0,zmax,nx(2));
 psi=ones(nx(1),nx(2));
-psi=psi(:,2)*sin(pi/rmax*xr)
+psi=psi(:,2)*sin(pi/rmax*xr);
 psi(1,:)=0;
 psi(end,:)=0;
 psi(:,1)=0;
@@ -27,20 +27,28 @@ dt = .001;
 ct = 1;
 Ish=500e3;
 b3=mu0*Ish./(2*pi*r);
-p1=1;
-f1=10;
+f0=r.*b3;
+ppoly=[-3 2 0];
+fpoly=[0 1 max(f0(:))];
 dpsidtpsi=1;
 
 while dpsidtpsi>(1e-8)
+    psimax=max(psi(:));
+    psibar=psi/psimax;
     
-    p=p1*psi.^2;
-    F=f1*psi;
+    p=ppoly(1).*psibar.^2+ppoly(2).*psibar+ppoly(3);
+    F=fpoly(1).*psibar.^2+fpoly(2).*psibar+fpoly(3);
+    
+    dpdpsi=2*ppoly(1).*psibar+ppoly(2);
+    dfdpsi=2*fpoly(1).*psibar+fpoly(2);
 
-    pterm=-mu0*r(2:end-1,2:end-1).^2*ddpsi(psi,p);
-    fterm=-0.5*ddpsi(psi,F.^2);
+    pterm=-mu0*r.^2*dpdpsi;
+    fterm=-0.5*dfdpsi;
+    %fterm=-0.5*ddpsi(psi,f0.^2);
    
     if ct>10
         C=pterm+fterm;
+        C=C(2:end-1,2:end-1);
     else
         C=-1;
     end
@@ -61,7 +69,7 @@ while dpsidtpsi>(1e-8)
     ct=ct+1;
     dpsidtpsi=max(abs(dpsidt(:)))./max(psi(:));
     fprintf('maximum dpsidt/psi= %e\n',dpsidtpsi)
-    psi
+    psi;
 end
 
 contourf(z,r,psi)

@@ -12,8 +12,10 @@ psi=zeros(nx(1),nx(2));
 % Initial Guess
 rmax=max(r(:));
 zmax=max(z(:));
-xr=linspace(0,rmax,nx(1))
+xr=linspace(0,rmax,nx(1));
+xz=linspace(0,zmax,nx(2));
 psi=ones(nx(1),nx(2));
+psi=psi(:,2)*sin(pi/rmax*xr)
 psi(1,:)=0;
 psi(end,:)=0;
 psi(:,1)=0;
@@ -25,26 +27,37 @@ dt = .001;
 ct = 1;
 Ish=500e3;
 b3=mu0*Ish./(2*pi*r);
-p1=1;
-f1=10;
+f0=r.*b3;
+ppoly=[-3 2 0];
+fpoly=[0 1 0.1];
 dpsidtpsi=1;
 
 while dpsidtpsi>(1e-8)
+    psimax=max(psi(:));
+    psibar=psi/psimax;
     
-    p=p1*psi.^2;
-    F=f1*psi;
+    p=ppoly(1).*psibar.^2+ppoly(2).*psibar+ppoly(3);
+    F=fpoly(1).*psibar.^2+fpoly(2).*psibar+fpoly(3);
     
-    pterm=-mu0*r(2:end-1,2:end-1).^2*ddpsi(psi,p);
-    fterm=-0.5*ddpsi(psi,F.^2);
-    %C=-1;
-    C=pterm+fterm;
+    dpdpsi=2*ppoly(1).*psi+ppoly(2);
+    dfdpsi=2*fpoly(1).*psi+fpoly(2);
+
+    pterm=-mu0*r(2:end-1,2:end-1).^2*dydx(psi,p);
+    fterm=-0.5*dydx(psi,F.^2);
+    %fterm=-0.5*ddpsi(psi,f0.^2);
+   
+    if ct>10
+        C=pterm+fterm;
+    else
+        C=-1;
+    end
     
     dstarpsi=Drr*psi + psi*Dzz;
     
     dpsidt = dstarpsi(2:end-1,2:end-1) - C;
     psi(2:end-1,2:end-1) = psi(2:end-1,2:end-1) + dpsidt*dt;
     
-    if mod(ct,100)==1
+    if mod(ct,10)==1
         contourf(z,r,psi)
         colorbar
         xlabel('z [m]')
